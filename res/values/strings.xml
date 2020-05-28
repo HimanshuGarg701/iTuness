@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">iTuness</string>
+    <string name="singer">Singer</string>
+    <string name="album">Album</string>
+    <string name="song">Song</string>
+    <string name="albumPicture">AlbumImage</string>
 </resources>
