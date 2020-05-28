@@ -19,5 +19,5 @@ interface SongDao {
 
     @Query("DELETE FROM songs")
     fun deleteAllSongs()
-    
+
 }
