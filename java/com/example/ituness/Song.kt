@@ -8,14 +8,17 @@ import androidx.room.PrimaryKey
 data class Song(
 
     @PrimaryKey
-    val songName: String,
+    val trackId : Long,
+
+    @ColumnInfo(name = "song")
+    val trackName: String,
 
     @ColumnInfo(name = "singer")
-    val singerName : String,
+    val artistName : String,
 
     @ColumnInfo(name = "album")
-    val albumName : String,
+    val collectionName : String,
 
     @ColumnInfo(name = "album_image")
-    val imageUrl : String) {
+    val artworkUrl100 : String) {
 }
