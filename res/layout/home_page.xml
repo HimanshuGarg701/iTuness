@@ -7,7 +7,7 @@
     tools:context=".HomePage">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/albumImage"
         android:layout_width="150dp"
         android:layout_height="250dp"
         android:layout_marginStart="8dp"
@@ -26,8 +26,8 @@
         android:layout_marginEnd="8dp"
         android:text="@string/song"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintStart_toEndOf="@+id/albumImage"
+        app:layout_constraintTop_toTopOf="@+id/albumImage" />
 
     <TextView
         android:id="@+id/albumTitle"
@@ -38,7 +38,7 @@
         android:layout_marginEnd="8dp"
         android:text="@string/album"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/albumImage"
         app:layout_constraintTop_toBottomOf="@+id/songTitle" />
 
     <TextView
@@ -50,6 +50,6 @@
         android:layout_marginEnd="8dp"
         android:text="@string/singer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/albumImage"
         app:layout_constraintTop_toBottomOf="@+id/albumTitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

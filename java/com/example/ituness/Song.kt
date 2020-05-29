@@ -16,6 +16,9 @@ data class Song(
     @ColumnInfo(name = "singer")
     val artistName : String,
 
+    @ColumnInfo(name="song_preview")
+    val previewUrl : String,
+
     @ColumnInfo(name = "album")
     val collectionName : String,
 
