@@ -21,7 +21,7 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 interface SongApiService{
-    @GET("search/?term=honey")
+    @GET("search/?term=honey+singh")
     fun getSongs() : Deferred<ReturnedData>
 }
 

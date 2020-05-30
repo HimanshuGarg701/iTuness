@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ituness.databinding.RecyclerHomepageBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +56,7 @@ class HomePage : AppCompatActivity() {
             var getSongDeferred = SongsApi.retrofitService.getSongs()
             try{
                 val returnedSongsData = getSongDeferred.await()
+                binding.recyclerSongs.adapter = SongListAdapter(returnedSongsData.results)
                 Log.d("ReturnedData", returnedSongsData.toString())
             }catch(e : Exception){
                 Log.d("ReturnedData", e.message)
