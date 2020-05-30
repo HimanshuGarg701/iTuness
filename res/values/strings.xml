@@ -5,4 +5,7 @@
     <string name="song">Song</string>
     <string name="albumPicture">AlbumImage</string>
     <string name="searchView">search</string>
+    <string name="startButton">PLAY</string>
+    <string name="stopButton">STOP</string>
+    <string name="pauseButton">PAUSE</string>
 </resources>

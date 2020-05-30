@@ -1,9 +1,12 @@
 package com.example.ituness
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(tableName = "songs")
 data class Song(
 
@@ -23,5 +26,5 @@ data class Song(
     val collectionName : String?,
 
     @ColumnInfo(name = "album_image")
-    val artworkUrl100 : String?) {
+    val artworkUrl100 : String?) : Parcelable{
 }

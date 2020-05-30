@@ -1,8 +1,10 @@
 package com.example.ituness
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ituness.databinding.HomePageBinding
 import com.squareup.picasso.Picasso
@@ -21,9 +23,19 @@ class SongListAdapter(private var songs: List<Song>) : RecyclerView.Adapter<Song
     override fun onBindViewHolder(holder: SongsViewHolder, position: Int) {
         val song = songs[position]
         holder.bind(song)
+        holder.song = song
     }
 
-    class SongsViewHolder(private val binding : HomePageBinding) : RecyclerView.ViewHolder(binding.root){
+    class SongsViewHolder(private val binding : HomePageBinding, var song : Song?=null) : RecyclerView.ViewHolder(binding.root){
+
+        init{
+            binding.root.setOnClickListener {
+                val intent = Intent(binding.root.context, SongDetails::class.java)
+                intent.putExtra("SONG ", song)
+                binding.root.context.startActivity(intent)
+            }
+        }
+
         fun bind(song: Song){
             if(song.collectionName !=null){
                 binding.albumTitle.text = "Album: ${song.collectionName}"

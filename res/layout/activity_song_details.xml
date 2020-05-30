@@ -8,41 +8,47 @@
 
     <ImageView
         android:id="@+id/detailsAlbumImage"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="300dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/albumPicture"
         app:srcCompat="@android:drawable/btn_star_big_on" />
 
     <Button
-        android:id="@+id/button"
-        android:layout_width=".33pt"
+        android:id="@+id/pauseButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        android:background="#00000000"
+        android:layout_marginStart="5dp"
+        android:background="#000"
+        android:text="@string/pauseButton"
+        android:textColor="#fff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/playButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:background="#000"
+        android:text="@string/startButton"
+        android:textColor="#fff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/stopButton"
+        app:layout_constraintStart_toEndOf="@+id/pauseButton" />
+
+    <Button
+        android:id="@+id/stopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:background="#000"
+        android:text="@string/stopButton"
         android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width=".33pt"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        android:background="#00000000"
-        android:textColor="#fff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button"
-        app:layout_constraintStart_toEndOf="@+id/button3" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width=".33pt"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        android:background="#00000000"
-        android:textColor="#fff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

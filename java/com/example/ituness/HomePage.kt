@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ituness.databinding.RecyclerHomepageBinding
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,7 @@ class HomePage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
-
+        binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 //        var mp : MediaPlayer? = null
 //        binding.start.setOnClickListener {
 //            mp = MediaPlayer().apply {
