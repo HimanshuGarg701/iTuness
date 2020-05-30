@@ -5,15 +5,22 @@ import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
 import com.example.ituness.databinding.RecyclerHomepageBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import javax.security.auth.callback.Callback
 
 class HomePage : AppCompatActivity() {
 
     private lateinit var binding : RecyclerHomepageBinding
-
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
@@ -31,6 +38,8 @@ class HomePage : AppCompatActivity() {
 //        binding.stop.setOnClickListener {
 //            mp?.release()
 //        }
+
+        getAllSongs()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -39,5 +48,17 @@ class HomePage : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun getAllSongs(){
+        coroutineScope.launch {
+            var getSongDeferred = SongsApi.retrofitService.getSongs()
+            try{
+                val returnedSongsData = getSongDeferred.await()
+                Log.d("ReturnedData", returnedSongsData.toString())
+            }catch(e : Exception){
+                Log.d("ReturnedData", e.message)
+            }
+        }
     }
 }
