@@ -29,8 +29,7 @@ data class Song(
     @ColumnInfo(name = "album_image")
     val artworkUrl100 : String?) : Parcelable{
 
-
-    constructor() : this(0, "","","","","")
+    constructor() : this(0, "", "", "", "", "")
 
     constructor(parcel: Parcel) : this(
         parcel.readLong(),

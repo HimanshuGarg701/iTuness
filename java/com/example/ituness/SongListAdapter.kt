@@ -1,6 +1,7 @@
 package com.example.ituness
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,7 @@ class SongListAdapter(private var songs: List<Song>) : RecyclerView.Adapter<Song
             binding.root.setOnClickListener {
                 val intent = Intent(binding.root.context, SongDetails::class.java)
                 intent.putExtra("SONG ", song)
+                Log.d("SongDetails", song.toString())
                 binding.root.context.startActivity(intent)
             }
         }

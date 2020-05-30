@@ -20,9 +20,10 @@ class SongDetails : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_song_details)
 
         val song = intent.getParcelableExtra<Song>("SONG")
+        if(song==null)
+            Log.d("DetailsSong", "null")
 
-
-        assignValues(song!!)
+        assignValues(song)
         binding.playButton.setOnClickListener {
             if(song!=null && song.previewUrl!=null) {
                 mp = MediaPlayer().apply {
@@ -43,31 +44,30 @@ class SongDetails : AppCompatActivity() {
         }
     }
 
-    private fun assignValues(song : Song){
-        if(song.collectionName !=null){
-            binding.detailSongAlbum.text = "Album: ${song.collectionName}"
-        }
-        else{
-            binding.detailSongAlbum.text = "Album: N/A"
-        }
+    private fun assignValues(song : Song?){
+        if(song!=null) {
+            if (song.collectionName != null) {
+                binding.detailSongAlbum.text = "Album: ${song.collectionName}"
+            } else {
+                binding.detailSongAlbum.text = "Album: N/A"
+            }
 
-        if(song.artistName !=null){
-            binding.detailSongSingerName.text = "By: ${song.artistName}"
-        }
-        else{
-            binding.detailSongSingerName.text = "By: N/A"
-        }
+            if (song.artistName != null) {
+                binding.detailSongSingerName.text = "By: ${song.artistName}"
+            } else {
+                binding.detailSongSingerName.text = "By: N/A"
+            }
 
 
-        if(song.trackName !=null){
-            binding.detailSongName.text = "${song.trackName}"
-        }
-        else{
-            binding.detailSongName.text = "Song: N/A"
-        }
+            if (song.trackName != null) {
+                binding.detailSongName.text = "${song.trackName}"
+            } else {
+                binding.detailSongName.text = "Song: N/A"
+            }
 
-        if(song.artworkUrl100 !=null){
-            Picasso.get().load(song.artworkUrl100).into(binding.detailsAlbumImage)
+            if (song.artworkUrl100 != null) {
+                Picasso.get().load(song.artworkUrl100).into(binding.detailsAlbumImage)
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.ituness
 
+import android.app.Application
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
@@ -12,10 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ituness.databinding.RecyclerHomepageBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.security.auth.callback.Callback
 
 class HomePage : AppCompatActivity() {
@@ -23,25 +21,14 @@ class HomePage : AppCompatActivity() {
     private lateinit var binding : RecyclerHomepageBinding
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
+    private lateinit var songDao : SongDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
         binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-//        var mp : MediaPlayer? = null
-//        binding.start.setOnClickListener {
-//            mp = MediaPlayer().apply {
-//                setAudioStreamType(AudioManager.STREAM_MUSIC)
-//                setDataSource("https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview111/v4/90/6d/12/906d12eb-3f20-a41b-e07b-e19194b722da/mzaf_768312763704820908.plus.aac.p.m4a" )
-//                prepare()
-//                start()
-//            }
-//        }
-//
-//        binding.stop.setOnClickListener {
-//            mp?.release()
-//        }
 
-        getAllSongs()
+        getAllSongs(requireNotNull(this).application)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -52,16 +39,41 @@ class HomePage : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun getAllSongs(){
+    private fun getAllSongs(application : Application){
         coroutineScope.launch {
             var getSongDeferred = SongsApi.retrofitService.getSongs()
             try{
                 val returnedSongsData = getSongDeferred.await()
-                binding.recyclerSongs.adapter = SongListAdapter(returnedSongsData.results)
+                insertSongsToDatabase(application, returnedSongsData.results)
+
+                binding.recyclerSongs.adapter = SongListAdapter(getSongs(application))
                 Log.d("ReturnedData", returnedSongsData.toString())
             }catch(e : Exception){
                 Log.d("ReturnedData", e.message)
             }
         }
+    }
+
+    private suspend fun insertSongsToDatabase(application : Application, songs : List<Song>){
+        withContext(Dispatchers.IO){
+            songDao = SongDatabase.getInstance(application).songDao
+            for(song in songs) {
+                try {
+                    songDao.insert(song)
+                }
+                catch (e: Exception) {
+                    continue
+                }
+            }
+        }
+    }
+
+    private suspend fun getSongs(application: Application) : List<Song>{
+        var results : List<Song> = ArrayList<Song>()
+        withContext(Dispatchers.IO){
+            songDao = SongDatabase.getInstance(application).songDao
+            results = songDao.getAllSongs()
+        }
+        return results
     }
 }
