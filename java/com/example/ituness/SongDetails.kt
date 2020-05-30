@@ -4,13 +4,13 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.content.Intent
 import android.util.Log
 import androidx.databinding.DataBindingUtil
 import com.example.ituness.databinding.ActivitySongDetailsBinding
 import com.squareup.picasso.Picasso
 
 class SongDetails : AppCompatActivity() {
-
 
     private lateinit var binding : ActivitySongDetailsBinding
     private var mp : MediaPlayer? = null
@@ -19,21 +19,26 @@ class SongDetails : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_song_details)
 
-        val song = intent.getParcelableExtra<Song>("SONG")
-        if(song==null)
-            Log.d("DetailsSong", "null")
+        val songName = intent.getStringExtra("songName")
+        val previewUrl = intent.getStringExtra("previewUrl")
+        val album = intent.getStringExtra("album")
+        val image = intent.getStringExtra("image")
+        val singer = intent.getStringExtra("singer")
 
+        val song = Song(0, songName, singer, previewUrl, album, image)
         assignValues(song)
-        binding.playButton.setOnClickListener {
-            if(song!=null && song.previewUrl!=null) {
-                mp = MediaPlayer().apply {
-                    setAudioStreamType(AudioManager.STREAM_MUSIC)
-                    setDataSource(song.previewUrl)
-                    prepare()
-                    start()
-                }
+
+        if(song.previewUrl!=null) {
+            mp = MediaPlayer().apply {
+                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setDataSource(song.previewUrl)
+                prepare()
             }
         }
+        binding.playButton.setOnClickListener {
+            if(song.previewUrl!=null)
+                    mp?.start()
+            }
 
         binding.pauseButton.setOnClickListener {
             mp?.pause()
@@ -42,6 +47,11 @@ class SongDetails : AppCompatActivity() {
         binding.stopButton.setOnClickListener {
             mp?.release()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mp?.release()
     }
 
     private fun assignValues(song : Song?){

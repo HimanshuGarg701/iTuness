@@ -18,10 +18,14 @@
             android:id="@+id/detailsAlbumImage"
             android:layout_width="match_parent"
             android:layout_height="300dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:contentDescription="@string/albumPicture"
+            android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/albumPicture"
             app:srcCompat="@android:drawable/btn_star_big_on" />
 
         <Button

@@ -27,12 +27,9 @@ data class Song(
     val collectionName : String?,
 
     @ColumnInfo(name = "album_image")
-    val artworkUrl100 : String?) : Parcelable{
-
-    constructor() : this(0, "", "", "", "", "")
-
+    val artworkUrl100 : String?) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readLong(),
+        parcel.readValue(Long::class.java.classLoader) as? Long,
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -41,9 +38,8 @@ data class Song(
     ) {
     }
 
-
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(trackId!!)
+        parcel.writeValue(trackId)
         parcel.writeString(trackName)
         parcel.writeString(artistName)
         parcel.writeString(previewUrl)
@@ -64,4 +60,5 @@ data class Song(
             return arrayOfNulls(size)
         }
     }
+
 }

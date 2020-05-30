@@ -32,7 +32,12 @@ class SongListAdapter(private var songs: List<Song>) : RecyclerView.Adapter<Song
         init{
             binding.root.setOnClickListener {
                 val intent = Intent(binding.root.context, SongDetails::class.java)
-                intent.putExtra("SONG ", song)
+
+                intent.putExtra("songName", song!!.trackName)
+                intent.putExtra("previewUrl", song!!.previewUrl)
+                intent.putExtra("singer", song!!.artistName)
+                intent.putExtra("image", song!!.artworkUrl100)
+                intent.putExtra("album", song!!.collectionName)
                 Log.d("SongDetails", song.toString())
                 binding.root.context.startActivity(intent)
             }
