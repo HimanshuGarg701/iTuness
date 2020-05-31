@@ -31,14 +31,16 @@
         <Button
             android:id="@+id/pauseButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:background="#000"
             android:text="@string/pauseButton"
             android:textColor="#fff"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detailSongSingerName"
+            app:layout_constraintVertical_bias="1.0" />
 
         <Button
             android:id="@+id/playButton"
@@ -46,11 +48,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:layout_marginBottom="8dp"
             android:background="#000"
             android:text="@string/startButton"
             android:textColor="#fff"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@+id/stopButton"
             app:layout_constraintEnd_toStartOf="@+id/stopButton"
             app:layout_constraintStart_toEndOf="@+id/pauseButton" />
 

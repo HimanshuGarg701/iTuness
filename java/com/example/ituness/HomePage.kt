@@ -41,7 +41,8 @@ class HomePage : AppCompatActivity() {
 
     private fun getAllSongs(application : Application){
         coroutineScope.launch {
-            var getSongDeferred = SongsApi.retrofitService.getSongs()
+            var getSongDeferred = SongsApi.retrofitService.getSongs("badshah")
+
             try{
                 val returnedSongsData = getSongDeferred.await()
                 insertSongsToDatabase(application, returnedSongsData.results)
@@ -57,6 +58,7 @@ class HomePage : AppCompatActivity() {
     private suspend fun insertSongsToDatabase(application : Application, songs : List<Song>){
         withContext(Dispatchers.IO){
             songDao = SongDatabase.getInstance(application).songDao
+            songDao.deleteAllSongs()
             for(song in songs) {
                 try {
                     songDao.insert(song)
