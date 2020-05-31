@@ -9,11 +9,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ituness.databinding.RecyclerHomepageBinding
 import kotlinx.coroutines.*
+import java.lang.StringBuilder
 import javax.security.auth.callback.Callback
 
 class HomePage : AppCompatActivity() {
@@ -22,13 +24,15 @@ class HomePage : AppCompatActivity() {
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     private lateinit var songDao : SongDao
+    private var term : String? = null
+    private lateinit var applicationn : Application
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
         binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-
-        getAllSongs(requireNotNull(this).application)
+        applicationn = requireNotNull(this).application
+        getAllSongs(term, applicationn)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -36,31 +40,65 @@ class HomePage : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.search, menu)
+        val menuItem = menu?.findItem(R.id.search)
+        val searchView = menuItem!!.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                term = query
+                term = term?.replace(" ", "+")
+                term.plus("@")
+                getAllSongs(term, applicationn)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                term = newText
+                term = term?.replace(" ", "+")
+                getAllSongs(term, applicationn)
+                return true
+            }
+
+        })
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun getAllSongs(application : Application){
+    private fun getAllSongs(term : String?, application : Application){
         coroutineScope.launch {
-            var getSongDeferred = SongsApi.retrofitService.getSongs("badshah")
+            if(term!=null && !term.equals("")) {
+                var getSongDeferred = SongsApi.retrofitService.getSongs(term)
 
-            try{
-                val returnedSongsData = getSongDeferred.await()
-                insertSongsToDatabase(application, returnedSongsData.results)
+                try {
+                    val returnedSongsData = getSongDeferred.await()
 
-                binding.recyclerSongs.adapter = SongListAdapter(getSongs(application))
-                Log.d("ReturnedData", returnedSongsData.toString())
-            }catch(e : Exception){
-                Log.d("ReturnedData", e.message)
+                    insertSongsToDatabase(application, term, returnedSongsData.results)
+
+                    binding.recyclerSongs.adapter = SongListAdapter(getSongs(application))
+                    Log.d("ReturnedData", returnedSongsData.toString())
+                } catch (e: Exception) {
+                    Log.d("ReturnedData", e.message)
+                }
+            }else{
+                Log.d("TermData", "term is null")
             }
         }
     }
 
-    private suspend fun insertSongsToDatabase(application : Application, songs : List<Song>){
+    private suspend fun insertSongsToDatabase(application : Application, term : String?, songs : List<Song>){
         withContext(Dispatchers.IO){
+            var searchTerm = term
             songDao = SongDatabase.getInstance(application).songDao
             songDao.deleteAllSongs()
+
+            searchTerm = if(term!![term.length-1].equals("@")){
+                term.replace("@", "")
+            } else{
+                ""
+            }
+
             for(song in songs) {
                 try {
+                    song.searchTerm = searchTerm
                     songDao.insert(song)
                 }
                 catch (e: Exception) {

@@ -14,6 +14,9 @@ data class Song(
     @PrimaryKey
     val trackId : Long?,
 
+    @ColumnInfo(name="searched")
+    var searchTerm :String?,
+
     @ColumnInfo(name = "song")
     val trackName: String?,
 
@@ -34,12 +37,14 @@ data class Song(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
+        parcel.readString(),
         parcel.readString()
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(trackId)
+        parcel.writeString(searchTerm)
         parcel.writeString(trackName)
         parcel.writeString(artistName)
         parcel.writeString(previewUrl)

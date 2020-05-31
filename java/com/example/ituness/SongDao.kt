@@ -20,4 +20,7 @@ interface SongDao {
     @Query("DELETE FROM songs")
     fun deleteAllSongs()
 
+    @Query("SELECT searched FROM songs")
+    fun getTerms() : List<String>
+
 }
