@@ -13,14 +13,12 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
     var songs = MutableLiveData<List<Song>>()
 
     init{
-        Log.d("ClearedViewMode", "All Started")
         songs.value = ArrayList()
     }
 
      override fun onCleared() {
         super.onCleared()
         job.cancel()
-        Log.d("ClearedViewMode", "All Clear")
     }
 
     // Fetching the songs through network call
@@ -42,12 +40,9 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
 
                 try {
                     returnedSongsData= getSongDeferred.await()
-                    Log.d("ReturnedData", returnedSongsData.toString())
                 } catch (e: Exception) {
                     Log.d("ReturnedData", e.message)
                 }
-            } else {
-                Log.d("TermData", "term is null")
             }
         }
         return returnedSongsData?.results
@@ -73,7 +68,6 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
     fun getSongForHistory(term: String){
         scope.launch{
             songs.value = loadSongsFromDatabase(term)
-            Log.d("HomePageViewModel", songs.value.toString())
         }
     }
 

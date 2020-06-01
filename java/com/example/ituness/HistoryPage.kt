@@ -38,7 +38,6 @@ class HistoryPage : AppCompatActivity() {
 
         //Observing list of recent searches
         viewModel.listTerms.observe(this, Observer{recents ->
-            Log.d("Recents", recents.toString())
             listOfTerms = recents
             binding.recyclerHistory.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
             if(listOfTerms!=null)

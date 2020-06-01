@@ -23,7 +23,6 @@ class HistoryViewModel(private val songDao : SongDao, application: Application) 
     private fun getListOfSearch(){
         scope.launch {
             listTerms.value = fetchTermsFromDatabase()?.toSet()?.toList()
-            Log.d("listTerms", listTerms.value.toString())
         }
     }
 

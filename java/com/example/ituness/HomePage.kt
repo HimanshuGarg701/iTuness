@@ -44,8 +44,6 @@ class HomePage : AppCompatActivity() {
             binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
             if (termReceived != null) {
-                //TODO: When accessed from the history activity
-                Log.d("HomePage", "Came from History ")
                 viewModel.getSongForHistory(termReceived.replace(" ", "+"))
                 viewModel.songs.observe(this, Observer{newList ->
                     listOfSongs = newList
