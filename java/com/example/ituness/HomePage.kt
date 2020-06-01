@@ -1,6 +1,7 @@
 package com.example.ituness
 
 import android.app.Application
+import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
@@ -36,6 +37,12 @@ class HomePage : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.recent ->{
+                val intent = Intent(this, HistoryPage::class.java)
+                startActivity(intent)
+            }
+        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -47,7 +54,8 @@ class HomePage : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 term = query
                 term = term?.replace(" ", "+")
-                term.plus("@")
+                val newTerm = "$term@"
+                Log.d("searchedTerm", newTerm)
                 getAllSongs(term, applicationn)
                 return true
             }
@@ -90,15 +98,17 @@ class HomePage : AppCompatActivity() {
             songDao = SongDatabase.getInstance(application).songDao
             songDao.deleteAllSongs()
 
-            searchTerm = if(term!![term.length-1].equals("@")){
-                term.replace("@", "")
+            if(term!![term.length-1]!=('@')){
+                searchTerm = term.substring(0, term.length-2)
             } else{
-                ""
+                Log.d("NotUpdated", "Empty")
+                searchTerm = ""
             }
-
+            if(songs[0]!=null)
+                songs[0].searchTerm = searchTerm
             for(song in songs) {
                 try {
-                    song.searchTerm = searchTerm
+                    Log.d("searchedTermUpdated", term!![term.length-1].toString())
                     songDao.insert(song)
                 }
                 catch (e: Exception) {

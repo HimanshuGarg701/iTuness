@@ -8,5 +8,5 @@
     <string name="startButton">PLAY</string>
     <string name="stopButton">STOP</string>
     <string name="pauseButton">PAUSE</string>
-    <string name="recent">Recent Search</string>
+    <string name="recent">RecentSearch</string>
 </resources>

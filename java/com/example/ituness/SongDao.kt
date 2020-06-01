@@ -23,4 +23,7 @@ interface SongDao {
     @Query("SELECT searched FROM songs")
     fun getTerms() : List<String>
 
+    @Query("SELECT * FROM songs WHERE searched =:term")
+    fun getSongs(term : String) : List<Song>
+
 }

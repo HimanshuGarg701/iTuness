@@ -25,7 +25,7 @@ class SongDetails : AppCompatActivity() {
         val image = intent.getStringExtra("image")
         val singer = intent.getStringExtra("singer")
 
-        val song = Song(0, songName, singer, previewUrl, album, image)
+        val song = Song(0, "", songName, singer, previewUrl, album, image)
         assignValues(song)
 
         if(song.previewUrl!=null) {
