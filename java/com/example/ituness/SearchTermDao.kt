@@ -10,11 +10,11 @@ import androidx.room.Query
 interface SearchTermDao {
 
     @Insert
-    fun addTerm(term : String)
+    fun addTerm(term : SearchTerm)
 
-    @Delete
+    @Query("DELETE FROM recents WHERE id=:id")
     fun deleteTerm(id : Int)
 
     @Query("SELECT * FROM recents")
-    fun getRecents() : List<String>
+    fun getRecents() : List<SearchTerm>
 }
