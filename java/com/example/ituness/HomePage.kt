@@ -54,9 +54,8 @@ class HomePage : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 term = query
                 term = term?.replace(" ", "+")
-                val newTerm = "$term@"
-                Log.d("searchedTerm", newTerm)
                 getAllSongs(term, applicationn)
+
                 return true
             }
 
@@ -98,14 +97,6 @@ class HomePage : AppCompatActivity() {
             songDao = SongDatabase.getInstance(application).songDao
             songDao.deleteAllSongs()
 
-            if(term!![term.length-1]!=('@')){
-                searchTerm = term.substring(0, term.length-2)
-            } else{
-                Log.d("NotUpdated", "Empty")
-                searchTerm = ""
-            }
-            if(songs[0]!=null)
-                songs[0].searchTerm = searchTerm
             for(song in songs) {
                 try {
                     Log.d("searchedTermUpdated", term!![term.length-1].toString())
