@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class SearchTerm(
 
     @PrimaryKey
-    val id : Int,
+    val id : String,
 
     @ColumnInfo(name = "term")
     val term : String) {

@@ -13,15 +13,16 @@ import kotlinx.coroutines.*
 class HistoryPage : AppCompatActivity() {
 
     private lateinit var binding : RecyclerHistoryBinding
-    private lateinit var songDao : SongDao
+    private lateinit var searchDao : SearchTermDao
     private lateinit var applicationn : Application
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Main + job)
-
+    private lateinit var songDao : SongDao
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_history)
         applicationn = requireNotNull(this.application)
+        songDao = SongDatabase.getInstance(applicationn).songDao
         getSongs()
     }
 
@@ -35,8 +36,8 @@ class HistoryPage : AppCompatActivity() {
 
     private suspend fun showList(){
         withContext(Dispatchers.IO){
-            songDao = SongDatabase.getInstance(applicationn).songDao
-            val listSongs = songDao.getAllSongs()
+            searchDao = SearchTermDatabase.getInstance(applicationn).searchTermDao
+            val listSongs = searchDao.getRecents()
             Log.d("HistoryPage", listSongs.toString())
             binding.recyclerHistory.adapter = HistoryAdapter(listSongs)
         }

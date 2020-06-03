@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ituness.databinding.RecyclerHomepageBinding
 import kotlinx.coroutines.*
 import java.lang.StringBuilder
+import java.util.*
 import javax.security.auth.callback.Callback
+import kotlin.collections.ArrayList
 
 class HomePage : AppCompatActivity() {
 
@@ -25,12 +27,14 @@ class HomePage : AppCompatActivity() {
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
     private lateinit var songDao : SongDao
+    private lateinit var searchDao : SearchTermDao
     private var term : String? = null
     private lateinit var applicationn : Application
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
+        binding.invalidateAll()
         binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         applicationn = requireNotNull(this).application
         getAllSongs(term, applicationn)
@@ -55,14 +59,16 @@ class HomePage : AppCompatActivity() {
                 term = query
                 term = term?.replace(" ", "+")
                 getAllSongs(term, applicationn)
-
+                addTerm(term!!)
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                term = newText
-                term = term?.replace(" ", "+")
-                getAllSongs(term, applicationn)
+                if(newText!=null) {
+                    term = newText
+                    term = term?.replace(" ", "+")
+                    getAllSongs(term, applicationn)
+                }
                 return true
             }
 
@@ -116,5 +122,19 @@ class HomePage : AppCompatActivity() {
             results = songDao.getAllSongs()
         }
         return results
+    }
+
+    private fun addTerm(term : String){
+        coroutineScope.launch {
+            insertTermToDatabase(term)
+        }
+    }
+
+    private suspend fun insertTermToDatabase(term : String){
+        withContext(Dispatchers.IO){
+            val searchTerm = SearchTerm(UUID.randomUUID().toString(), term)
+            searchDao = SearchTermDatabase.getInstance(applicationn).searchTermDao
+            searchDao.addTerm(searchTerm)
+        }
     }
 }
