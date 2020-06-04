@@ -1,5 +1,6 @@
 package com.example.ituness
 
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -21,10 +22,19 @@ class HistoryAdapter(val recents : List<String>) : RecyclerView.Adapter<HistoryA
     override fun onBindViewHolder(holder: TermViewHolder, position: Int) {
         val recent = recents[position]
         holder.bind(recent)
+        holder.searchTerm = recent
 
     }
 
-    class TermViewHolder(private val binding : HistoryPageBinding) : RecyclerView.ViewHolder(binding.root){
+    class TermViewHolder(private val binding : HistoryPageBinding, var searchTerm: String?=null) : RecyclerView.ViewHolder(binding.root){
+
+        init{
+            binding.root.setOnClickListener {
+                val intent = Intent(binding.root.context, HomePage::class.java)
+                intent.putExtra("searchTerm", searchTerm)
+                binding.root.context.startActivity(intent)
+            }
+        }
 
         fun bind(term : String){
             binding.recentSearch.text = term

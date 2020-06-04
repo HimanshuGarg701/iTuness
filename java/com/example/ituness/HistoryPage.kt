@@ -28,9 +28,7 @@ class HistoryPage : AppCompatActivity() {
 
     private fun getSongs(){
         scope.launch {
-            withContext(Dispatchers.IO){
-                showList()
-            }
+            showList()
         }
     }
 

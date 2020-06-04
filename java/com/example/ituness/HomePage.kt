@@ -37,7 +37,12 @@ class HomePage : AppCompatActivity() {
         binding.invalidateAll()
         binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         applicationn = requireNotNull(this).application
-        getAllSongs(term, applicationn)
+
+        val termReceived = intent.getStringExtra("searchTerm")
+        if(termReceived!=null){
+            getSongsFromDatabase(termReceived)
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -99,13 +104,13 @@ class HomePage : AppCompatActivity() {
 
     private suspend fun insertSongsToDatabase(application : Application, term : String?, songs : List<Song>){
         withContext(Dispatchers.IO){
-            var searchTerm = term
             songDao = SongDatabase.getInstance(application).songDao
             songDao.deleteAllSongs()
 
             for(song in songs) {
                 try {
                     Log.d("searchedTermUpdated", term!![term.length-1].toString())
+                    song.searchTerm = term
                     songDao.insert(song)
                 }
                 catch (e: Exception) {
@@ -135,6 +140,21 @@ class HomePage : AppCompatActivity() {
             val searchTerm = SearchTerm(UUID.randomUUID().toString(), term)
             searchDao = SearchTermDatabase.getInstance(applicationn).searchTermDao
             searchDao.addTerm(searchTerm)
+        }
+    }
+
+    private fun getSongsFromDatabase(term : String){
+        coroutineScope.launch {
+            fetchSongsFromDatabase(term)
+        }
+    }
+
+    private suspend fun fetchSongsFromDatabase(term : String){
+        withContext((Dispatchers.IO)){
+            songDao = SongDatabase.getInstance(applicationn).songDao
+            val result = songDao.getSongs(term)
+            Log.d("NotNullTest", result.toString())
+            binding.recyclerSongs.adapter = SongListAdapter(result)
         }
     }
 }
