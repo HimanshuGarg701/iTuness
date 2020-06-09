@@ -3,17 +3,18 @@ package com.example.ituness
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
 
-class HomePageViewModel (val songDao : SongDao, application: Application) : AndroidViewModel(application) {
+class HomePageViewModel (private val songDao : SongDao, application: Application) : AndroidViewModel(application) {
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Main + job)
     var songs = MutableLiveData<List<Song>>()
+    var listTerms = MutableLiveData<List<String>>()
 
     init{
         songs.value = ArrayList()
+        listTerms.value = ArrayList()
     }
 
     override fun onCleared() {
@@ -51,7 +52,28 @@ class HomePageViewModel (val songDao : SongDao, application: Application) : Andr
     }
 
     //Insert song data to Room Database (Cache)
-    private fun addSongToRoomDatabase(listSongs : List<Song>?, searchTerm : String){
+    private suspend fun addSongToRoomDatabase(listSongs : List<Song>?, searchTerm : String){
+        withContext(Dispatchers.IO) {
+            if (listSongs != null) {
+                for (song in listSongs) {
+                    song.searchTerm = searchTerm
+                    songDao.insert(song)
+                }
+            }
+        }
+    }
 
+    private fun getListOfSearch(){
+        scope.launch {
+            listTerms.value = fetchTermsFromDatabase()
+        }
+    }
+
+    private suspend fun fetchTermsFromDatabase() : List<String>?{
+        var result :List<String>?= null
+        withContext(Dispatchers.IO){
+            result = songDao.getRecents()
+        }
+        return result
     }
 }

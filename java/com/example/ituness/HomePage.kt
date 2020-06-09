@@ -22,23 +22,27 @@ class HomePage : AppCompatActivity() {
     private lateinit var binding : RecyclerHomepageBinding
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
-    private lateinit var songDao : SongDao
     private lateinit var searchDao : SearchTermDao
     private var term : String? = null
     private lateinit var applicationn : Application
     private lateinit var viewModel: HomePageViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
         binding.invalidateAll()
 
         var listOfSongs : List<Song>? = null
+
+        //creating viewModel object
         applicationn = requireNotNull(this).application
         val songDao = SongDatabase.getInstance(applicationn).songDao
         val viewModelFactory = HomePageViewModelFactory(songDao, applicationn)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
 
 
+        //Observing live data (list of songs) from viewModel
         viewModel.songs.observe(this, Observer{newList ->
             listOfSongs = newList
             binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
@@ -75,10 +79,7 @@ class HomePage : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if(query!=null) {
-                    term = query
-                    term = term?.replace(" ", "+")
-                    viewModel.getSongs(term!!)
-                    //getAllSongs(term, applicationn)
+                    viewModel.getSongs(query.replace(" ", "+"))
                     addTerm(term!!)
                     searchView.clearFocus()
                 }
@@ -87,43 +88,13 @@ class HomePage : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if(newText!=null) {
-                    term = newText
-                    term = term?.replace(" ", "+")
-                    viewModel.getSongs(term!!)
+                    viewModel.getSongs(newText.replace(" ", "+"))
                 }
                 return true
             }
 
         })
         return super.onCreateOptionsMenu(menu)
-    }
-
-
-    private suspend fun insertSongsToDatabase(application : Application, term : String?, songs : List<Song>){
-        withContext(Dispatchers.IO){
-            songDao = SongDatabase.getInstance(application).songDao
-            songDao.deleteAllSongs()
-
-            for(song in songs) {
-                try {
-                    Log.d("searchedTermUpdated", term!![term.length-1].toString())
-                    song.searchTerm = term
-                    songDao.insert(song)
-                }
-                catch (e: Exception) {
-                    continue
-                }
-            }
-        }
-    }
-
-    private suspend fun getSongs(application: Application) : List<Song>{
-        var results : List<Song> = ArrayList<Song>()
-        withContext(Dispatchers.IO){
-            songDao = SongDatabase.getInstance(application).songDao
-            //results = songDao.getAllSongs()
-        }
-        return results
     }
 
     private fun addTerm(term : String){
@@ -137,21 +108,6 @@ class HomePage : AppCompatActivity() {
             val searchTerm = SearchTerm(UUID.randomUUID().toString(), term)
             searchDao = SearchTermDatabase.getInstance(applicationn).searchTermDao
             searchDao.addTerm(searchTerm)
-        }
-    }
-
-    private fun getSongsFromDatabase(term : String){
-        coroutineScope.launch {
-            fetchSongsFromDatabase(term)
-        }
-    }
-
-    private suspend fun fetchSongsFromDatabase(term : String){
-        withContext((Dispatchers.IO)){
-            songDao = SongDatabase.getInstance(applicationn).songDao
-            val result = songDao.getSongs(term)
-            Log.d("NotNullTest", result.toString())
-            binding.recyclerSongs.adapter = SongListAdapter(result)
         }
     }
 }
