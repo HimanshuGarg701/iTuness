@@ -35,7 +35,7 @@ class HistoryPage : AppCompatActivity() {
     private suspend fun showList(){
         withContext(Dispatchers.IO){
             searchDao = SearchTermDatabase.getInstance(applicationn).searchTermDao
-            val listSongs = searchDao.getRecents()
+            val listSongs = searchDao.getRecents().toSet().toList()
             Log.d("HistoryPage", listSongs.toString())
             binding.recyclerHistory.adapter = HistoryAdapter(listSongs)
         }

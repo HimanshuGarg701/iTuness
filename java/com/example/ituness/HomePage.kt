@@ -12,6 +12,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ituness.databinding.RecyclerHomepageBinding
@@ -37,10 +39,18 @@ class HomePage : AppCompatActivity() {
         binding.invalidateAll()
         binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         applicationn = requireNotNull(this).application
+        val songDao = SongDatabase.getInstance(applicationn).songDao
+        val viewModelFactory = HomePageViewModelFactory(songDao, applicationn)
 
-        val termReceived = intent.getStringExtra("searchTerm")
-        if(termReceived!=null){
-            getSongsFromDatabase(termReceived)
+        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
+
+        try {
+            val termReceived = intent.getStringExtra("searchTerm")
+            if (termReceived != null) {
+                getSongsFromDatabase(termReceived)
+            }
+        }catch(e: Exception){
+            Log.d("LoadFailed", "Failed to load data")
         }
 
     }
