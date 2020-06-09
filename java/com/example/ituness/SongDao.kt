@@ -1,5 +1,6 @@
 package com.example.ituness
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -15,7 +16,7 @@ interface SongDao {
     fun delete(song : Song)
 
     @Query("SELECT * FROM songs")
-    fun  getAllSongs() : List<Song>
+    fun  getAllSongs() : LiveData<List<Song>>
 
     @Query("DELETE FROM songs")
     fun deleteAllSongs()

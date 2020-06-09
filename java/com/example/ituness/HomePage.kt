@@ -2,9 +2,6 @@ package com.example.ituness
 
 import android.app.Application
 import android.content.Intent
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,16 +9,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ituness.databinding.RecyclerHomepageBinding
 import kotlinx.coroutines.*
-import java.lang.StringBuilder
 import java.util.*
-import javax.security.auth.callback.Callback
 import kotlin.collections.ArrayList
+import androidx.lifecycle.Observer
 
 class HomePage : AppCompatActivity() {
 
@@ -32,26 +26,35 @@ class HomePage : AppCompatActivity() {
     private lateinit var searchDao : SearchTermDao
     private var term : String? = null
     private lateinit var applicationn : Application
-
+    private lateinit var viewModel: HomePageViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
         binding.invalidateAll()
-        binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+        var listOfSongs : List<Song>? = null
         applicationn = requireNotNull(this).application
         val songDao = SongDatabase.getInstance(applicationn).songDao
         val viewModelFactory = HomePageViewModelFactory(songDao, applicationn)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
 
-        val viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
 
-        try {
-            val termReceived = intent.getStringExtra("searchTerm")
-            if (termReceived != null) {
-                getSongsFromDatabase(termReceived)
-            }
-        }catch(e: Exception){
-            Log.d("LoadFailed", "Failed to load data")
-        }
+        viewModel.songs.observe(this, Observer{newList ->
+            listOfSongs = newList
+            binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+            if(listOfSongs!=null)
+                binding.recyclerSongs.adapter = SongListAdapter(listOfSongs!!)
+        })
+
+
+//        try {
+//            val termReceived = intent.getStringExtra("searchTerm")
+//            if (termReceived != null) {
+//                getSongsFromDatabase(termReceived)
+//            }
+//        }catch(e: Exception){
+//            Log.d("LoadFailed", "Failed to load data")
+//        }
 
     }
 
@@ -71,10 +74,14 @@ class HomePage : AppCompatActivity() {
         val searchView = menuItem!!.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
-                term = query
-                term = term?.replace(" ", "+")
-                getAllSongs(term, applicationn)
-                addTerm(term!!)
+                if(query!=null) {
+                    term = query
+                    term = term?.replace(" ", "+")
+                    viewModel.getSongs(term!!)
+                    //getAllSongs(term, applicationn)
+                    addTerm(term!!)
+                    searchView.clearFocus()
+                }
                 return true
             }
 
@@ -82,7 +89,7 @@ class HomePage : AppCompatActivity() {
                 if(newText!=null) {
                     term = newText
                     term = term?.replace(" ", "+")
-                    getAllSongs(term, applicationn)
+                    viewModel.getSongs(term!!)
                 }
                 return true
             }
@@ -91,26 +98,6 @@ class HomePage : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun getAllSongs(term : String?, application : Application){
-        coroutineScope.launch {
-            if(term!=null && !term.equals("")) {
-                var getSongDeferred = SongsApi.retrofitService.getSongs(term)
-
-                try {
-                    val returnedSongsData = getSongDeferred.await()
-
-                    insertSongsToDatabase(application, term, returnedSongsData.results)
-
-                    binding.recyclerSongs.adapter = SongListAdapter(getSongs(application))
-                    Log.d("ReturnedData", returnedSongsData.toString())
-                } catch (e: Exception) {
-                    Log.d("ReturnedData", e.message)
-                }
-            }else{
-                Log.d("TermData", "term is null")
-            }
-        }
-    }
 
     private suspend fun insertSongsToDatabase(application : Application, term : String?, songs : List<Song>){
         withContext(Dispatchers.IO){
@@ -134,7 +121,7 @@ class HomePage : AppCompatActivity() {
         var results : List<Song> = ArrayList<Song>()
         withContext(Dispatchers.IO){
             songDao = SongDatabase.getInstance(application).songDao
-            results = songDao.getAllSongs()
+            //results = songDao.getAllSongs()
         }
         return results
     }
