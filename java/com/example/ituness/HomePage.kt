@@ -80,7 +80,6 @@ class HomePage : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if(query!=null) {
                     viewModel.getSongs(query.replace(" ", "+"))
-                    addTerm(term!!)
                     searchView.clearFocus()
                 }
                 return true
@@ -95,19 +94,5 @@ class HomePage : AppCompatActivity() {
 
         })
         return super.onCreateOptionsMenu(menu)
-    }
-
-    private fun addTerm(term : String){
-        coroutineScope.launch {
-            insertTermToDatabase(term)
-        }
-    }
-
-    private suspend fun insertTermToDatabase(term : String){
-        withContext(Dispatchers.IO){
-            val searchTerm = SearchTerm(UUID.randomUUID().toString(), term)
-            searchDao = SearchTermDatabase.getInstance(applicationn).searchTermDao
-            searchDao.addTerm(searchTerm)
-        }
     }
 }
