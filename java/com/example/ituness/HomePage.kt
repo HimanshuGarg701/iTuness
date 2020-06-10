@@ -12,21 +12,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.ituness.databinding.RecyclerHomepageBinding
-import kotlinx.coroutines.*
-import java.util.*
-import kotlin.collections.ArrayList
 import androidx.lifecycle.Observer
 
 class HomePage : AppCompatActivity() {
 
     private lateinit var binding : RecyclerHomepageBinding
-    private val job = Job()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
-    private lateinit var searchDao : SearchTermDao
-    private var term : String? = null
-    private lateinit var applicationn : Application
     private lateinit var viewModel: HomePageViewModel
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +27,7 @@ class HomePage : AppCompatActivity() {
         var listOfSongs : List<Song>? = null
 
         //creating viewModel object
-        applicationn = requireNotNull(this).application
+        val applicationn = requireNotNull(this).application
         val songDao = SongDatabase.getInstance(applicationn).songDao
         val viewModelFactory = HomePageViewModelFactory(songDao, applicationn)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
@@ -79,7 +70,7 @@ class HomePage : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if(query!=null) {
-                    viewModel.getSongs(query.replace(" ", "+"))
+                    viewModel.getSongs(query.replace(" ", "+"), true)
                     searchView.clearFocus()
                 }
                 return true
@@ -87,7 +78,11 @@ class HomePage : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if(newText!=null) {
-                    viewModel.getSongs(newText.replace(" ", "+"))
+                    try {
+                        viewModel.getSongs(newText.replace(" ", "+"), false)
+                    }catch(e : Exception){
+                        Log.d("HomePageE", e.message)
+                    }
                 }
                 return true
             }

@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.databinding.DataBindingUtil
 import com.example.ituness.databinding.ActivitySongDetailsBinding
 import com.squareup.picasso.Picasso
+import java.util.*
 
 class SongDetails : AppCompatActivity() {
 
@@ -24,7 +25,6 @@ class SongDetails : AppCompatActivity() {
         val album = intent.getStringExtra("album")
         val image = intent.getStringExtra("image")
         val singer = intent.getStringExtra("singer")
-
         val song = Song(0, "", songName, singer, previewUrl, album, image)
         assignValues(song)
 

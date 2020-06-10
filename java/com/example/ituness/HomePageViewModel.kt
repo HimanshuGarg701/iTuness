@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HomePageViewModel (private val songDao : SongDao, application: Application) : AndroidViewModel(application) {
     private val job = Job()
@@ -23,10 +25,12 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
     }
 
     // Fetching the songs through network call
-    fun getSongs(searchTerm : String){
+    fun getSongs(searchTerm : String, isSubmitted : Boolean){
         scope.launch {
             songs.value = fetchSongsFromNetwork(searchTerm)
-            addSongToRoomDatabase(songs.value, searchTerm)
+            addSongToRoomDatabase(songs.value, searchTerm, isSubmitted)
+            if(isSubmitted)
+                getListOfSearch()
         }
     }
 
@@ -40,7 +44,7 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
 
                 try {
                     returnedSongsData= getSongDeferred.await()
-
+                    Log.d("ReturnedData", returnedSongsData.toString())
                 } catch (e: Exception) {
                     Log.d("ReturnedData", e.message)
                 }
@@ -52,12 +56,17 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
     }
 
     //Insert song data to Room Database (Cache)
-    private suspend fun addSongToRoomDatabase(listSongs : List<Song>?, searchTerm : String){
+    private suspend fun addSongToRoomDatabase(listSongs : List<Song>?, searchTerm : String, isSubmitted: Boolean){
         withContext(Dispatchers.IO) {
             if (listSongs != null) {
                 for (song in listSongs) {
-                    song.searchTerm = searchTerm
-                    songDao.insert(song)
+                    try {
+                        if(isSubmitted)
+                            song.searchTerm = searchTerm
+                        songDao.insert(song)
+                    }catch(e : Exception){
+                        Log.d("HomePageViewModel", e.message)
+                    }
                 }
             }
         }
@@ -65,7 +74,8 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
 
     private fun getListOfSearch(){
         scope.launch {
-            listTerms.value = fetchTermsFromDatabase()
+            listTerms.value = fetchTermsFromDatabase()?.toSet()?.toList()
+            Log.d("listTerms", listTerms.value.toString())
         }
     }
 

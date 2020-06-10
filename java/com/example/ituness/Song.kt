@@ -10,8 +10,8 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "songs")
 data class Song(
 
-    @PrimaryKey
-    val trackId : Long?,
+    @PrimaryKey(autoGenerate = true)
+    var id : Long = 0L,
 
     @ColumnInfo(name="searched")
     var searchTerm :String?,
