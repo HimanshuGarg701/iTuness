@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ituness.databinding.HistoryPageBinding
 
-class HistoryAdapter(val recents : List<String>) : RecyclerView.Adapter<HistoryAdapter.TermViewHolder>(){
+class HistoryAdapter(private val recents : List<String>) : RecyclerView.Adapter<HistoryAdapter.TermViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TermViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

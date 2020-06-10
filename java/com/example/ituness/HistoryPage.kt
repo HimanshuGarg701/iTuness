@@ -23,6 +23,7 @@ class HistoryPage : AppCompatActivity() {
         val viewModelFactory = HomePageViewModelFactory(songDao, applicationn)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
 
+        //Observing list of recent searches
         viewModel.listTerms.observe(this, Observer{recents ->
             Log.d("Recrents", recents.toString())
             binding.recyclerHistory.adapter = HistoryAdapter(recents)

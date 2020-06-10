@@ -15,13 +15,14 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
     var listTerms = MutableLiveData<List<String>>()
 
     init{
+        Log.d("ClearedViewMode", "All Started")
         songs.value = ArrayList()
-        listTerms.value = ArrayList()
     }
 
-    override fun onCleared() {
+     override fun onCleared() {
         super.onCleared()
         job.cancel()
+        Log.d("ClearedViewMode", "All Clear")
     }
 
     // Fetching the songs through network call
