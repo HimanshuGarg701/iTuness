@@ -1,6 +1,5 @@
 package com.example.ituness
 
-import android.app.Application
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,14 +20,22 @@ class HomePage : AppCompatActivity() {
     private var listOfSongs : List<Song>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.recycler_homepage
+        )
         binding.invalidateAll()
 
 
         //creating viewModel object
         val applicationn = requireNotNull(this).application
-        val songDao = SongDatabase.getInstance(applicationn).songDao
-        val viewModelFactory = HomePageViewModelFactory(songDao, applicationn)
+        val songDao = SongDatabase.getInstance(
+            applicationn
+        ).songDao
+        val viewModelFactory =
+            HomePageViewModelFactory(
+                songDao,
+                applicationn
+            )
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
 
 
@@ -44,7 +51,10 @@ class HomePage : AppCompatActivity() {
                     listOfSongs = newList
 
                     if(listOfSongs!=null && listOfSongs!!.isNotEmpty())
-                        binding.recyclerSongs.adapter = SongListAdapter(listOfSongs!!)
+                        binding.recyclerSongs.adapter =
+                            SongListAdapter(
+                                listOfSongs!!
+                            )
                 })
             }else{
                 //Observing live data (list of songs) from viewModel
@@ -52,7 +62,10 @@ class HomePage : AppCompatActivity() {
                     listOfSongs = newList
 
                     if(listOfSongs!=null && listOfSongs!!.isNotEmpty())
-                        binding.recyclerSongs.adapter = SongListAdapter(listOfSongs!!)
+                        binding.recyclerSongs.adapter =
+                            SongListAdapter(
+                                listOfSongs!!
+                            )
                 })
             }
         }catch(e: Exception){

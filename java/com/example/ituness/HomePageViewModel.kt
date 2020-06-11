@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 class HomePageViewModel (private val songDao : SongDao, application: Application) : AndroidViewModel(application) {
@@ -28,13 +27,14 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
     fun getSongs(searchTerm : String, isSubmitted : Boolean){
         scope.launch {
             songs.value = fetchSongsFromNetwork(searchTerm)
-            addSongToRoomDatabase(songs.value, searchTerm, isSubmitted)
+            if(!searchTerm.equals("RecentSearch"))
+                addSongToRoomDatabase(songs.value, searchTerm, isSubmitted)
         }
     }
 
     //Making network call on background thread
     private suspend fun fetchSongsFromNetwork(searchTerm: String) : List<Song>?{
-        var returnedSongsData :ReturnedData? = null
+        var returnedSongsData : ReturnedData? = null
 
         withContext(Dispatchers.IO) {
             if (searchTerm != null && searchTerm != "") {

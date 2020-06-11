@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Song::class], version = 22, exportSchema = false)
+@Database(entities = [Song::class], version = 24, exportSchema = false)
 abstract class SongDatabase : RoomDatabase() {
 
     abstract val songDao : SongDao
@@ -14,9 +14,10 @@ abstract class SongDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE : SongDatabase? = null
 
-        fun getInstance(context : Context) : SongDatabase{
+        fun getInstance(context : Context) : SongDatabase {
             synchronized(this){
-                var instance = INSTANCE
+                var instance =
+                    INSTANCE
 
                 if(instance == null){
                     instance = Room.databaseBuilder(context.applicationContext, SongDatabase::class.java, "songs")

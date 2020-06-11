@@ -43,7 +43,8 @@ class HistoryAdapter(private val recents : List<String>) : RecyclerView.Adapter<
         }
 
         fun bind(term : String){
-            binding.recentSearch.text = term
+            if(!term.equals("RecentSearch"))
+                binding.recentSearch.text = term
         }
     }
 }

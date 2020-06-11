@@ -3,9 +3,7 @@ package com.example.ituness
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ituness.databinding.HomePageBinding
 import com.squareup.picasso.Picasso
@@ -14,7 +12,9 @@ class SongListAdapter(private var songs: List<Song>) : RecyclerView.Adapter<Song
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongsViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = HomePageBinding.inflate(layoutInflater, parent, false)
-        return SongsViewHolder(binding)
+        return SongsViewHolder(
+            binding
+        )
     }
 
     override fun getItemCount(): Int {

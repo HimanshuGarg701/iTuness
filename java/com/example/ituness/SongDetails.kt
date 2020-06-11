@@ -4,12 +4,9 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.content.Intent
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import com.example.ituness.databinding.ActivitySongDetailsBinding
 import com.squareup.picasso.Picasso
-import java.util.*
 
 class SongDetails : AppCompatActivity() {
 
@@ -25,7 +22,15 @@ class SongDetails : AppCompatActivity() {
         val album = intent.getStringExtra("album")
         val image = intent.getStringExtra("image")
         val singer = intent.getStringExtra("singer")
-        val song = Song(0, "", songName, singer, previewUrl, album, image)
+        val song = Song(
+            0,
+            "",
+            songName,
+            singer,
+            previewUrl,
+            album,
+            image
+        )
         assignValues(song)
 
         if(song.previewUrl!=null) {

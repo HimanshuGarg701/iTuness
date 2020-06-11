@@ -10,7 +10,10 @@ class HistoryViewModelFactory (private val songDao : SongDao,
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(HistoryViewModel::class.java)){
-            return HistoryViewModel(songDao, application) as T
+            return HistoryViewModel(
+                songDao,
+                application
+            ) as T
         }
         throw IllegalArgumentException("Failed to create ViewModel")
     }

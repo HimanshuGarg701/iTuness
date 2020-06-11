@@ -16,12 +16,20 @@ class HistoryPage : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.recycler_history)
+        binding = DataBindingUtil.setContentView(this,
+            R.layout.recycler_history
+        )
 
         //creating viewModel object
         val applicationn = requireNotNull(this.application)
-        val songDao = SongDatabase.getInstance(applicationn).songDao
-        val viewModelFactory = HistoryViewModelFactory(songDao, applicationn)
+        val songDao = SongDatabase.getInstance(
+            applicationn
+        ).songDao
+        val viewModelFactory =
+            HistoryViewModelFactory(
+                songDao,
+                applicationn
+            )
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HistoryViewModel::class.java)
 
 
@@ -34,7 +42,8 @@ class HistoryPage : AppCompatActivity() {
             listOfTerms = recents
             binding.recyclerHistory.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
             if(listOfTerms!=null)
-                binding.recyclerHistory.adapter = HistoryAdapter(listOfTerms!!)
+                binding.recyclerHistory.adapter =
+                    HistoryAdapter(listOfTerms!!)
         })
     }
 }

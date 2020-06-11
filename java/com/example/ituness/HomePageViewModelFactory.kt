@@ -9,7 +9,10 @@ class HomePageViewModelFactory (private val songDao : SongDao,
                                 private val application: Application) : ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(HomePageViewModel::class.java)){
-            return HomePageViewModel(songDao, application) as T
+            return HomePageViewModel(
+                songDao,
+                application
+            ) as T
         }
         throw IllegalArgumentException("Failed to create ViewModel")
     }
