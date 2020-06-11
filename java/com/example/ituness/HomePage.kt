@@ -25,7 +25,7 @@ class HomePage : AppCompatActivity() {
         binding.invalidateAll()
 
         var listOfSongs : List<Song>? = null
-
+        var list : List<String>? = null
         //creating viewModel object
         val applicationn = requireNotNull(this).application
         val songDao = SongDatabase.getInstance(applicationn).songDao
@@ -39,6 +39,10 @@ class HomePage : AppCompatActivity() {
             binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
             if(listOfSongs!=null)
                 binding.recyclerSongs.adapter = SongListAdapter(listOfSongs!!)
+        })
+
+        viewModel.listTerms.observe(this, Observer {
+            Log.d("ReturnedList", it.toString())
         })
 
 

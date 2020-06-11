@@ -73,7 +73,7 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
         }
     }
 
-    private fun getListOfSearch(){
+    fun getListOfSearch(){
         scope.launch {
             listTerms.value = fetchTermsFromDatabase()?.toSet()?.toList()
             Log.d("listTerms", listTerms.value.toString())

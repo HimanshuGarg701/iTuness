@@ -20,9 +20,13 @@ class HistoryAdapter(private val recents : List<String>) : RecyclerView.Adapter<
     }
 
     override fun onBindViewHolder(holder: TermViewHolder, position: Int) {
-        val recent = recents[position]
-        holder.bind(recent)
-        holder.searchTerm = recent
+        try {
+            val recent = recents[position].replace("+", " ").capitalize()
+            holder.bind(recent)
+            holder.searchTerm = recent
+        }catch(e : Exception){
+            Log.d("HistoryAdapter", e.message)
+        }
 
     }
 

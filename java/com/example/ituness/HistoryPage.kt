@@ -10,7 +10,7 @@ import com.example.ituness.databinding.RecyclerHistoryBinding
 
 class HistoryPage : AppCompatActivity() {
 
-    private lateinit var viewModel: HomePageViewModel
+    private lateinit var viewModel: HistoryViewModel
     private lateinit var binding : RecyclerHistoryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,13 +20,19 @@ class HistoryPage : AppCompatActivity() {
         //creating viewModel object
         val applicationn = requireNotNull(this.application)
         val songDao = SongDatabase.getInstance(applicationn).songDao
-        val viewModelFactory = HomePageViewModelFactory(songDao, applicationn)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
+        val viewModelFactory = HistoryViewModelFactory(songDao, applicationn)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(HistoryViewModel::class.java)
+
+
+        var listOfTerms : List<String>? =null
+
 
         //Observing list of recent searches
         viewModel.listTerms.observe(this, Observer{recents ->
-            Log.d("Recrents", recents.toString())
-            binding.recyclerHistory.adapter = HistoryAdapter(recents)
+            Log.d("Recents", recents.toString())
+            listOfTerms = recents
+            if(listOfTerms!=null)
+                binding.recyclerHistory.adapter = HistoryAdapter(listOfTerms!!)
         })
     }
 }
