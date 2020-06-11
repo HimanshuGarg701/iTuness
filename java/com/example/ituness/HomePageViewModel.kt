@@ -12,7 +12,6 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
     private val job = Job()
     private val scope = CoroutineScope(Dispatchers.Main + job)
     var songs = MutableLiveData<List<Song>>()
-    var listTerms = MutableLiveData<List<String>>()
 
     init{
         Log.d("ClearedViewMode", "All Started")
@@ -69,5 +68,20 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
                 }
             }
         }
+    }
+
+    fun getSongForHistory(term: String){
+        scope.launch{
+            songs.value = loadSongsFromDatabase(term)
+            Log.d("HomePageViewModel", songs.value.toString())
+        }
+    }
+
+    private suspend fun loadSongsFromDatabase(term : String) : List<Song>?{
+        var listOfSongs : List<Song>? = null
+        withContext(Dispatchers.IO){
+            listOfSongs = songDao.getSongs(term)
+        }
+        return listOfSongs
     }
 }

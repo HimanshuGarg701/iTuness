@@ -22,9 +22,9 @@ interface SongDao {
     fun deleteAllSongs()
 
     @Query("SELECT searched FROM songs")
-    fun getTerms() : List<String>
-
-    @Query("SELECT searched FROM songs")
     fun getRecents() : List<String>
+
+    @Query("SELECT * FROM songs WHERE searched=:term")
+    fun getSongs(term : String) : List<Song>
 
 }

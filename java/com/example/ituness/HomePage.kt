@@ -18,14 +18,13 @@ class HomePage : AppCompatActivity() {
 
     private lateinit var binding : RecyclerHomepageBinding
     private lateinit var viewModel: HomePageViewModel
-
+    private var listOfSongs : List<Song>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.recycler_homepage)
         binding.invalidateAll()
 
-        var listOfSongs : List<Song>? = null
-        var list : List<String>? = null
+
         //creating viewModel object
         val applicationn = requireNotNull(this).application
         val songDao = SongDatabase.getInstance(applicationn).songDao
@@ -33,23 +32,32 @@ class HomePage : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(HomePageViewModel::class.java)
 
 
-        //Observing live data (list of songs) from viewModel
-        viewModel.songs.observe(this, Observer{newList ->
-            listOfSongs = newList
+        try {
+            val termReceived = intent.getStringExtra("searchTerm")
             binding.recyclerSongs.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
-            if(listOfSongs!=null)
-                binding.recyclerSongs.adapter = SongListAdapter(listOfSongs!!)
-        })
 
+            if (termReceived != null) {
+                //TODO: When accessed from the history activity
+                Log.d("HomePage", "Came from History ")
+                viewModel.getSongForHistory(termReceived.replace(" ", "+"))
+                viewModel.songs.observe(this, Observer{newList ->
+                    listOfSongs = newList
 
-//        try {
-//            val termReceived = intent.getStringExtra("searchTerm")
-//            if (termReceived != null) {
-//                getSongsFromDatabase(termReceived)
-//            }
-//        }catch(e: Exception){
-//            Log.d("LoadFailed", "Failed to load data")
-//        }
+                    if(listOfSongs!=null && listOfSongs!!.isNotEmpty())
+                        binding.recyclerSongs.adapter = SongListAdapter(listOfSongs!!)
+                })
+            }else{
+                //Observing live data (list of songs) from viewModel
+                viewModel.songs.observe(this, Observer{newList ->
+                    listOfSongs = newList
+
+                    if(listOfSongs!=null && listOfSongs!!.isNotEmpty())
+                        binding.recyclerSongs.adapter = SongListAdapter(listOfSongs!!)
+                })
+            }
+        }catch(e: Exception){
+            Log.d("LoadFailed", "Failed to load data")
+        }
 
     }
 
