@@ -30,8 +30,6 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
         scope.launch {
             songs.value = fetchSongsFromNetwork(searchTerm)
             addSongToRoomDatabase(songs.value, searchTerm, isSubmitted)
-            if(isSubmitted)
-                getListOfSearch()
         }
     }
 
@@ -71,20 +69,5 @@ class HomePageViewModel (private val songDao : SongDao, application: Application
                 }
             }
         }
-    }
-
-    fun getListOfSearch(){
-        scope.launch {
-            listTerms.value = fetchTermsFromDatabase()?.toSet()?.toList()
-            Log.d("listTerms", listTerms.value.toString())
-        }
-    }
-
-    private suspend fun fetchTermsFromDatabase() : List<String>?{
-        var result :List<String>?= null
-        withContext(Dispatchers.IO){
-            result = songDao.getRecents()
-        }
-        return result
     }
 }

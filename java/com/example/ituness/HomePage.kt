@@ -41,10 +41,6 @@ class HomePage : AppCompatActivity() {
                 binding.recyclerSongs.adapter = SongListAdapter(listOfSongs!!)
         })
 
-        viewModel.listTerms.observe(this, Observer {
-            Log.d("ReturnedList", it.toString())
-        })
-
 
 //        try {
 //            val termReceived = intent.getStringExtra("searchTerm")
